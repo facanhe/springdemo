@@ -36,6 +36,12 @@ public class studentController {
         return page.getRecords();
     }
 
+    @GetMapping("getlimit")
+    public List<student> getlimit(){
+        LambdaQueryWrapper<student> stuWrapper=new LambdaQueryWrapper<>();
+        stuWrapper.orderByDesc(student::getId);
+        return studentservice.list(stuWrapper);
+    }
     @GetMapping("/findById/{id}")
     public student findById(@PathVariable("id") int id){
         return studentservice.getById(id);
