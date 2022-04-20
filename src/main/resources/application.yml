@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    # url: jdbc:oracle:thin:@10.0.0.10:1521:orcl
+    url: jdbc:mysql://127.0.0.1:3306/user
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  #type-enums-package: com.tjxy.l2hmi.enums
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+logging:
+  level:
+    com:
+      example:
+        sprintgdemo:
+          mapper:
+            debug
