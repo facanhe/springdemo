@@ -9,6 +9,7 @@ import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.api.R;
+import com.example.sprintgdemo.util.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.sprintgdemo.entity.student;
@@ -79,7 +80,9 @@ public class studentController {
         stuWrapper.between(student::getAge,10,25);
         stuWrapper.like(student::getHoppy,"摇");
         String clientIpAddress = ServletUtil.getClientIP(request, null);
+        String clientIpAddress1= IpUtil.getIpAddr(request);
         System.out.println(clientIpAddress);
+        System.out.println(clientIpAddress1);
         return studentservice.list(stuWrapper);
     }
 
