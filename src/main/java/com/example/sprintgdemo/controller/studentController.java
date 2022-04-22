@@ -14,15 +14,25 @@ import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.sprintgdemo.entity.student;
 import com.example.sprintgdemo.service.studentService;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,5 +118,66 @@ public class studentController {
     @RequestMapping("/hello")
     public String hello(){
         return "hello";
+    }
+
+    @PostMapping("/update/import")
+    public boolean updatebatch(@RequestParam(value = "File") MultipartFile file)throws Exception{
+        String fileName=file.getOriginalFilename();
+        //int result=studentservice.importExcel();
+        List<student> stulist=new ArrayList<>();
+        String suffix=fileName.substring(fileName.lastIndexOf(".")+1);
+        Workbook wb=null;
+        try{
+            InputStream ins=file.getInputStream();
+            if(suffix.equals("xls")){
+                wb=new HSSFWorkbook(ins);
+            }else{
+                wb=new XSSFWorkbook(ins);
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        Sheet sheet=null;
+        try {
+            sheet = wb.getSheetAt(0);
+        } catch (Exception e) {
+            //log.error("sheet页不存在!");
+            e.printStackTrace();
+        }
+        if(sheet!=null){
+            for(int line=1;line<=sheet.getLastRowNum();line++){
+                student stu=new student();
+                Row row=sheet.getRow(line);
+                if(row==null) continue;
+                for(int i=0;i<4;i++){
+                    if(row.getCell(i)==null){
+                        row.createCell(i);
+                    }
+                    row.getCell(i).setCellType(CellType.STRING);
+                }
+                    String id = row.getCell(0).getStringCellValue();
+                    String age = row.getCell(2).getStringCellValue();
+                    String name = row.getCell(1).getStringCellValue();
+                    String hoppy = row.getCell(3).getStringCellValue();
+                    System.out.println(id);
+                    if(id!="") {stu.setId(Integer.parseInt(id));}
+                    stu.setName(name);
+                    if(age!=""){stu.setAge(Integer.parseInt(age));}
+                    stu.setHoppy(hoppy);
+                    stulist.add(stu);
+
+                   /* String age = row.getCell(2).getStringCellValue();
+                    String name = row.getCell(1).getStringCellValue();
+                    String hoppy = row.getCell(3).getStringCellValue();
+                    stu.setName(name);
+                    stu.setAge(Integer.parseInt(age));
+                    stu.setHoppy(hoppy);
+                    stulist.add(stu);*/
+
+
+            }
+        }
+
+        return studentservice.saveOrUpdateBatch(stulist);
     }
 }
