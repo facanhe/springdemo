@@ -61,7 +61,7 @@ public class studentController {
         stuWrapper.orderByAsc(student::getId);
         Page<student> page=studentservice.page(stuPage,stuWrapper);
         List<student> querylist=page.getRecords();
-        List<Map<String, Object>> list = CollUtil.newArrayList();
+        /*List<Map<String, Object>> list = CollUtil.newArrayList();
         for(student stu:querylist){
             Map<String,Object> row=new LinkedHashMap<>();
             row.put("学号",stu.getId());
@@ -79,7 +79,7 @@ public class studentController {
         ServletOutputStream out=response.getOutputStream();
         writer.flush(out,true);
         writer.close();
-        IoUtil.close(System.out);
+        IoUtil.close(System.out);*/
         return querylist;
     }
 
