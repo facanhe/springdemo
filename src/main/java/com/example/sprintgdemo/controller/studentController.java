@@ -56,7 +56,7 @@ public class studentController {
 
     @GetMapping("getById")
     public List<student> getAllStudent(HttpServletResponse response) throws IOException {
-        Page<student> stuPage=new Page(2,5);
+        Page<student> stuPage=new Page(1,5);
         LambdaQueryWrapper<student> stuWrapper=new LambdaQueryWrapper<>();
         stuWrapper.orderByAsc(student::getId);
         Page<student> page=studentservice.page(stuPage,stuWrapper);
